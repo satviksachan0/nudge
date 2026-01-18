@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class EmailService {
+export class EmailAddressService {
   constructor(private prisma: PrismaService) {}
 
   async findAllEmails(ownerId: string, ownerType: 'USER' | 'CLIENT') {

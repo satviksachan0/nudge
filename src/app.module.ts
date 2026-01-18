@@ -7,7 +7,7 @@ import { HealthController } from './health.controller';
 import { AuthModule } from './auth/auth.module';
 import { TestController } from './test/test.controller';
 import { InvoicesModule } from './invoices/invoices.module';
-import { EmailModule } from './emailAddress/emailAddress.module';
+import { EmailAddressModule } from './emailAddress/emailAddress.module';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { EmailModule } from './emailAddress/emailAddress.module';
     PrismaModule,
     AuthModule,
     InvoicesModule,
-    EmailModule,
+    EmailAddressModule,
   ],
   controllers: [AppController, HealthController, TestController],
   providers: [AppService],
