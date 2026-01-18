@@ -36,6 +36,8 @@ async function main() {
       status: InvoiceStatus.OVERDUE,
       userId: user.id,
       clientId: client.id,
+      invoiceDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      pdfUrl: 'http://example.com/invoice/inv-001.pdf',
     },
   });
 

@@ -71,11 +71,13 @@ model Client {
 
 model Invoice {
   id          String        @id @default(uuid())
-  invoiceNo  String
-  amount     Decimal
-  currency   String        @default("INR")
-  dueDate    DateTime
-  status     InvoiceStatus @default(DRAFT)
+  invoiceNo   String
+  amount      Decimal
+  currency    String        @default("INR")
+  dueDate     DateTime
+  status      InvoiceStatus @default(DRAFT)
+  invoiceDate DateTime
+  pdfUrl      String?
 
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
