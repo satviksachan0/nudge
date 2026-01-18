@@ -9,6 +9,7 @@ import { TestController } from './test/test.controller';
 import { InvoicesModule } from './invoices/invoices.module';
 import { EmailAddressModule } from './emailAddress/emailAddress.module';
 import { ClientModule } from './client/client.module';
+import { RemindersModule } from './reminders/reminders.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ClientModule } from './client/client.module';
     InvoicesModule,
     EmailAddressModule,
     ClientModule,
+    RemindersModule,
   ],
   controllers: [AppController, HealthController, TestController],
   providers: [AppService],

@@ -42,10 +42,13 @@ async function main() {
 
   await prisma.reminderRule.create({
     data: {
-      daysAfterDue: 3,
       tone: Tone.POLITE,
       channel: Channel.EMAIL,
       invoiceId: invoice.id,
+      maxReminders: 3,
+      repeatEveryDays: 7,
+      startAfterDays: 2,
+      isActive: true,
     },
   });
 }
