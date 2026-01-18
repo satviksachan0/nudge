@@ -10,9 +10,11 @@ import { InvoicesModule } from './invoices/invoices.module';
 import { EmailAddressModule } from './emailAddress/emailAddress.module';
 import { ClientModule } from './client/client.module';
 import { RemindersModule } from './reminders/reminders.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     AuthModule,

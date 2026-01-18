@@ -1,10 +1,10 @@
-import {
-  PrismaClient,
-  InvoiceStatus,
-  Tone,
-  Channel,
-} from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import {
+  Channel,
+  InvoiceStatus,
+  PrismaClient,
+  Tone,
+} from '../generated/prisma/client';
 
 const pool = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 
@@ -32,7 +32,7 @@ async function main() {
       invoiceNo: 'INV-001',
       amount: 25000,
       dueDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-      status: InvoiceStatus.OVERDUE,
+      status: InvoiceStatus.PENDING,
       userId: user.id,
       clientId: client.id,
       invoiceDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
