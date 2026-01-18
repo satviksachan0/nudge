@@ -11,6 +11,8 @@ import { EmailAddressModule } from './emailAddress/emailAddress.module';
 import { ClientModule } from './client/client.module';
 import { RemindersModule } from './reminders/reminders.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EmailService } from './notifications/email/email.service';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -22,8 +24,9 @@ import { ScheduleModule } from '@nestjs/schedule';
     EmailAddressModule,
     ClientModule,
     RemindersModule,
+    NotificationsModule,
   ],
   controllers: [AppController, HealthController, TestController],
-  providers: [AppService],
+  providers: [AppService, EmailService],
 })
 export class AppModule {}

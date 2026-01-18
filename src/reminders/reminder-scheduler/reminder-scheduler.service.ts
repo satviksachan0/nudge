@@ -1,13 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InvoiceStatus } from 'generated/prisma/enums';
+import { EmailService } from 'src/notifications/email/email.service';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class ReminderSchedulerService {
   private readonly logger = new Logger(ReminderSchedulerService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private emailService: EmailService,
+  ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleReminderScan() {
@@ -57,12 +61,54 @@ export class ReminderSchedulerService {
       }
 
       this.logger.log(`[MOCK] Sending reminder for invoice ${invoice.id}`);
+
+      const emails = await this.prisma.emailAddress.findMany({
+        where: {
+          ownerType: 'CLIENT',
+          ownerId: invoice.clientId,
+          isActive: true,
+          isPrimary: true,
+        },
+      });
+
+      if (emails.length === 0) {
+        this.logger.warn(`No email found for client ${invoice.clientId}`);
+        continue;
+      }
+
+      const subject = `Reminder: Invoice ${invoice.id} is due`;
+      const text = `
+Hi there,
+
+This is a gentle reminder that invoice ${invoice.id}
+amounting to ${invoice.amount} is overdue.
+
+Please let us know once payment is done.
+
+Regards,
+Nudge
+`;
+
+      let status: boolean = true;
+      const emailResult = await this.emailService.sendReminder(
+        emails[0].email,
+        subject,
+        text,
+      );
+
+      if (!emailResult.sucess) {
+        status = false;
+        this.logger.error(
+          `Failed to send reminder for invoice ${invoice.id}: ${emailResult.error}`,
+        );
+      }
+
       await this.prisma.reminderLog.create({
         data: {
           invoiceId: invoice.id,
           sentAt: new Date(),
           channel: 'EMAIL',
-          success: true,
+          success: status,
           tone: 'POLITE',
           ruleId: rule.id,
         },
