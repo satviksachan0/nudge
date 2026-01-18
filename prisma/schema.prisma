@@ -100,16 +100,18 @@ model Invoice {
 }
 
 model ReminderRule {
-  id          String   @id @default(uuid())
-  daysAfterDue Int
-  tone        Tone
-  channel     Channel
-  isActive    Boolean  @default(true)
+  id              String   @id @default(uuid())
+  tone            Tone
+  channel         Channel
+  isActive        Boolean  @default(true)
+  startAfterDays  Int
+  repeatEveryDays Int
+  maxReminders    Int
 
-  createdAt   DateTime @default(now())
+  createdAt       DateTime @default(now())
 
-  invoiceId   String
-  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+  invoiceId       String
+  invoice         Invoice  @relation(fields: [invoiceId], references: [id])
 
   reminderLogs ReminderLog[]
 }
