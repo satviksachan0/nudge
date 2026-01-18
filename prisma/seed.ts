@@ -1,7 +1,12 @@
-import { PrismaClient,InvoiceStatus, Tone, Channel } from '../generated/prisma/client';
+import {
+  PrismaClient,
+  InvoiceStatus,
+  Tone,
+  Channel,
+} from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-    const pool = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const pool = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 
 const prisma = new PrismaClient({ adapter: pool });
 
