@@ -39,6 +39,11 @@ enum Channel {
   WHATSAPP
 }
 
+enum EmailOwner {
+  USER
+  CLIENT
+}
+
 //////////////////////
 // MODELS
 //////////////////////
@@ -58,7 +63,6 @@ model User {
 model Client {
   id        String   @id @default(uuid())
   name      String
-  email     String?
   phone     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -123,4 +127,18 @@ model ReminderLog {
 
   ruleId    String?
   rule      ReminderRule? @relation(fields: [ruleId], references: [id])
+}
+
+model EmailAddress {
+  id        String @id @default(uuid())
+  email     String
+  isPrimary Boolean @default(false)
+  isActive  Boolean @default(true)
+
+  ownerType EmailOwner
+  ownerId   String
+
+  createdAt DateTime @default(now())
+
+  @@index([ownerId, ownerType])
 }
