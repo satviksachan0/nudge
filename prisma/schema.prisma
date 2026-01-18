@@ -7,8 +7,117 @@
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+//////////////////////
+// ENUMS
+//////////////////////
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum Tone {
+  POLITE
+  NEUTRAL
+  FIRM
+  STRICT
+}
+
+enum Channel {
+  EMAIL
+  WHATSAPP
+}
+
+//////////////////////
+// MODELS
+//////////////////////
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clients   Client[]
+  invoices  Invoice[]
+}
+
+model Client {
+  id        String   @id @default(uuid())
+  name      String
+  email     String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  invoices  Invoice[]
+}
+
+model Invoice {
+  id          String        @id @default(uuid())
+  invoiceNo  String
+  amount     Decimal
+  currency   String        @default("INR")
+  dueDate    DateTime
+  status     InvoiceStatus @default(DRAFT)
+
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  userId     String
+  user       User          @relation(fields: [userId], references: [id])
+
+  clientId   String
+  client     Client        @relation(fields: [clientId], references: [id])
+
+  reminderRules ReminderRule[]
+  reminderLogs  ReminderLog[]
+
+  @@index([userId])
+  @@index([clientId])
+}
+
+model ReminderRule {
+  id          String   @id @default(uuid())
+  daysAfterDue Int
+  tone        Tone
+  channel     Channel
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+
+  reminderLogs ReminderLog[]
+}
+
+model ReminderLog {
+  id        String   @id @default(uuid())
+  sentAt   DateTime @default(now())
+  channel  Channel
+  tone     Tone
+  success  Boolean
+  errorMsg String?
+
+  invoiceId String
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+
+  ruleId    String?
+  rule      ReminderRule? @relation(fields: [ruleId], references: [id])
 }
