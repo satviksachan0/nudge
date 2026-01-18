@@ -5,5 +5,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 @Module({
   imports: [PrismaModule],
   providers: [EmailAddressService],
+  exports: [EmailAddressService],
 })
 export class EmailAddressModule {}

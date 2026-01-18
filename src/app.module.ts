@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { TestController } from './test/test.controller';
 import { InvoicesModule } from './invoices/invoices.module';
 import { EmailAddressModule } from './emailAddress/emailAddress.module';
+import { ClientModule } from './client/client.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { EmailAddressModule } from './emailAddress/emailAddress.module';
     AuthModule,
     InvoicesModule,
     EmailAddressModule,
+    ClientModule,
   ],
   controllers: [AppController, HealthController, TestController],
   providers: [AppService],
