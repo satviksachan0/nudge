@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
@@ -32,6 +32,6 @@ export class AuthService {
       .JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'];
 
     const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn });
-    return { accessToken: token };
+    return token;
   }
 }

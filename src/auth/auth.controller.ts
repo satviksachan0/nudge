@@ -1,4 +1,5 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -15,7 +16,21 @@ export class AuthController {
   }
 
   @Post('login')
-  login(@Body('email') email: string, @Body('password') password: string) {
-    return this.authService.login(email, password);
+  async login(
+    @Body('email') email: string,
+    @Body('password') password: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token = await this.authService.login(email, password);
+
+    // secure is false due to development environment (http). Change to true in production (https).
+    res.cookie('accessToken', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return { success: true };
   }
 }
