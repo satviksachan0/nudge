@@ -1,16 +1,16 @@
 import {
-  Controller,
-  Req,
   Body,
-  Post,
-  Param,
+  Controller,
   Get,
+  Param,
   Patch,
+  Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
-import { InvoicesService } from './invoices.service';
-import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { JwtGuard } from 'src/auth/jwt/jwt.guard';
+import { CreateInvoiceDto } from './dto/create-invoice.dto';
+import { InvoicesService } from './invoices.service';
 
 @UseGuards(JwtGuard)
 @Controller('invoices')

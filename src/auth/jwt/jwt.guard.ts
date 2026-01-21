@@ -4,8 +4,8 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
 import * as jwt from 'jsonwebtoken';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
@@ -13,11 +13,9 @@ export class JwtGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const req = context.switchToHttp().getRequest();
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return false;
-    }
-    const token = authHeader.split(' ')[1];
+
+    const token = req.cookies?.accessToken;
+    if (!token) throw new UnauthorizedException('No token provided');
     try {
       const payload = jwt.verify(token, process.env.JWT_SECRET!);
       req.user = payload;
