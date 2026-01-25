@@ -32,4 +32,18 @@ export class ClientService {
 
     return client;
   }
+
+  async findAllByUser(userId: string) {
+    return this.prisma.client.findMany({
+      where: { userId },
+      select: { id: true, name: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async findOneById(userId: string, clientId: string) {
+    return this.prisma.client.findFirst({
+      where: { id: clientId, userId },
+    });
+  }
 }
