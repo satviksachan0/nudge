@@ -34,4 +34,12 @@ export class AuthService {
     const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn });
     return token;
   }
+
+  async me(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, email: true, name: true },
+    });
+    return user;
+  }
 }
