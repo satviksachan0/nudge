@@ -40,7 +40,7 @@ export class AuthService {
         { expiresIn },
       );
 
-      return { accessToken: token };
+      return token;
     });
   }
 
@@ -64,7 +64,7 @@ export class AuthService {
       { expiresIn },
     );
 
-    return { accessToken: token };
+    return token;
   }
 
   async me(userId: string) {
