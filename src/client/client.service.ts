@@ -10,13 +10,13 @@ export class ClientService {
     private emailService: EmailAddressService,
   ) {}
 
-  async createClient(userId: string, clientDto: CreateClientDto) {
+  async createClient(accountId: string, clientDto: CreateClientDto) {
     const { name, phone, emailAddresses } = clientDto;
     const client = await this.prisma.client.create({
       data: {
         name,
         phone,
-        userId,
+        accountId: accountId,
       },
     });
 
@@ -33,17 +33,20 @@ export class ClientService {
     return client;
   }
 
-  async findAllByUser(userId: string) {
+  async findAllByAccount(accountId: string) {
     return this.prisma.client.findMany({
-      where: { userId },
+      where: { accountId },
       select: { id: true, name: true },
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  async findOneById(userId: string, clientId: string) {
+  async findOneById(accountId: string, clientId: string) {
     return this.prisma.client.findFirst({
-      where: { id: clientId, userId },
+      where: {
+        id: clientId,
+        accountId,
+      },
     });
   }
 }

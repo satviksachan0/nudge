@@ -18,16 +18,16 @@ export class ClientController {
 
   @Post()
   createClient(@Req() req: any, @Body() clientDto: CreateClientDto) {
-    return this.clientService.createClient(req.user.userId, clientDto);
+    return this.clientService.createClient(req.accountId, clientDto);
   }
 
   @Get()
-  findAllByUser(@Req() req: any) {
-    return this.clientService.findAllByUser(req.user.userId);
+  findAllByAccount(@Req() req: any) {
+    return this.clientService.findAllByAccount(req.accountId);
   }
 
   @Get(':id')
   findOneById(@Req() req: any, @Param('id') clientId: string) {
-    return this.clientService.findOneById(req.user.userId, clientId);
+    return this.clientService.findOneById(req.accountId, clientId);
   }
 }

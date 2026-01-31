@@ -1,3 +1,5 @@
+import { InvoiceStatus } from 'generated/prisma/browser';
+
 export class CreateInvoiceDto {
   clientId: string;
   invoiceNumber: string;
@@ -6,4 +8,5 @@ export class CreateInvoiceDto {
   invoiceDate: Date;
   dueDate: Date;
   pdfUrl?: string;
+  status: InvoiceStatus;
 }

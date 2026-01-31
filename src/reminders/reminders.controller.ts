@@ -1,17 +1,16 @@
 import {
+  Body,
   Controller,
-  UseGuards,
+  Param,
+  ParseBoolPipe,
+  Patch,
   Post,
   Req,
-  Param,
-  Body,
-  Patch,
-  Get,
-  ParseBoolPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/jwt/jwt.guard';
-import { RemindersService } from './reminders.service';
 import { CreateReminderRuleDto } from './dto/create-reminder-rule.dto';
+import { RemindersService } from './reminders.service';
 
 @UseGuards(JwtGuard)
 @Controller('reminders')
@@ -24,7 +23,7 @@ export class RemindersController {
     @Param('invoiceId') invoiceId: string,
     @Body() dto: CreateReminderRuleDto,
   ) {
-    return this.remindersService.createRule(req.user.userId, invoiceId, dto);
+    return this.remindersService.createRule(req.userId, invoiceId, dto);
   }
 
   @Patch('rule/:ruleId/:isActive')
@@ -33,15 +32,6 @@ export class RemindersController {
     @Param('ruleId') ruleId: string,
     @Param('isActive', ParseBoolPipe) isActive: boolean,
   ) {
-    return this.remindersService.updateRuleStatus(
-      req.user.userId,
-      ruleId,
-      isActive,
-    );
-  }
-
-  @Get('logs/:invoiceId')
-  getLogs(@Req() req: any, @Param('invoiceId') invoiceId: string) {
-    return this.remindersService.getReminderLogs(req.user.userId, invoiceId);
+    return this.remindersService.updateRuleStatus(req.userId, ruleId, isActive);
   }
 }

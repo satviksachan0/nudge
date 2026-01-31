@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InvoicesService } from 'src/invoices/invoices.service';
-import { CreateReminderRuleDto } from './dto/create-reminder-rule.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateReminderRuleDto } from './dto/create-reminder-rule.dto';
 
 @Injectable()
 export class RemindersService {
@@ -20,23 +20,20 @@ export class RemindersService {
 
     return this.prisma.reminderRule.create({
       data: {
-        invoiceId: invoiceId,
-        startAfterDays: dto.startAfterDays,
-        repeatEveryDays: dto.repeatEveryDays,
-        maxReminders: dto.maxReminders,
-        tone: dto.tone,
+        clientId: invoice.clientId,
+        type: dto.type,
         isActive: dto.isActive,
-        channel: dto.channel,
+        config: {}, // TODO: implement config based on dto
       },
     });
   }
 
-  async updateRuleStatus(userId: string, ruleId: string, isActive: boolean) {
+  async updateRuleStatus(clientId: string, ruleId: string, isActive: boolean) {
     const rule = await this.prisma.reminderRule.findFirst({
       where: {
         id: ruleId,
-        invoice: {
-          userId: userId,
+        client: {
+          id: clientId,
         },
       },
     });
@@ -46,20 +43,6 @@ export class RemindersService {
     return this.prisma.reminderRule.update({
       where: { id: ruleId },
       data: { isActive: isActive },
-    });
-  }
-
-  async getReminderLogs(userId: string, invoiceId: string) {
-    const invoice = await this.invoiceService.findOne(userId, invoiceId);
-    if (!invoice) throw new NotFoundException('Invoice not found');
-
-    return this.prisma.reminderLog.findMany({
-      where: {
-        invoiceId: invoiceId,
-      },
-      orderBy: {
-        sentAt: 'desc',
-      },
     });
   }
 }
