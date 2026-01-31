@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
+import { SignupDto } from './dto/signup.dto';
 import { JwtGuard } from './jwt/jwt.guard';
 
 @Controller('auth')
@@ -20,8 +21,10 @@ export class AuthController {
     @Body('email') email: string,
     @Body('password') password: string,
     @Body('name') name: string,
+    @Body('accountName') accountName: string,
   ) {
-    return this.authService.signup(email, password, name);
+    const signupDto: SignupDto = { email, password, name, accountName };
+    return this.authService.signup(signupDto);
   }
 
   @Post('login')
