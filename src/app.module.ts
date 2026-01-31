@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
-import { PrismaModule } from './prisma/prisma.module';
-import { HealthController } from './health.controller';
 import { AuthModule } from './auth/auth.module';
-import { TestController } from './test/test.controller';
-import { InvoicesModule } from './invoices/invoices.module';
-import { EmailAddressModule } from './emailAddress/emailAddress.module';
 import { ClientModule } from './client/client.module';
-import { RemindersModule } from './reminders/reminders.module';
-import { ScheduleModule } from '@nestjs/schedule';
+import { EmailAddressModule } from './emailAddress/emailAddress.module';
+import { HealthController } from './health.controller';
+import { InvoicesModule } from './invoices/invoices.module';
 import { EmailService } from './notifications/email/email.service';
 import { NotificationsModule } from './notifications/notifications.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { RemindersModule } from './reminders/reminders.module';
+import { TestController } from './test/test.controller';
 
 @Module({
   imports: [

@@ -1,12 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
   moduleFormat = "cjs"
 }
 
@@ -26,16 +20,27 @@ enum InvoiceStatus {
   CANCELLED
 }
 
-enum Tone {
-  POLITE
-  NEUTRAL
-  FIRM
-  STRICT
+enum ReminderRuleType {
+  BEFORE_DUE
+  ON_DUE
+  AFTER_DUE
 }
 
-enum Channel {
+enum ReminderProposalStatus {
+  PENDING
+  APPROVED
+  CANCELLED
+  SENT
+}
+
+enum ReminderChannel {
   EMAIL
   WHATSAPP
+}
+
+enum ReminderExecutionStatus {
+  SENT
+  FAILED
 }
 
 enum EmailOwner {
@@ -47,29 +52,45 @@ enum EmailOwner {
 // MODELS
 //////////////////////
 
-model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
+model Account {
+  id   String @id @default(uuid())
+  name String
+
+  users    User[]
+  clients  Client[]
+  invoices Invoice[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
 
-  clients   Client[]
-  invoices  Invoice[]
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Client {
-  id        String   @id @default(uuid())
-  name      String
-  phone     String?
+  id    String  @id @default(uuid())
+  name  String
+  phone String?
+
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id])
+
+  invoices          Invoice[]
+  reminderRules     ReminderRule[]
+  reminderProposals ReminderProposal[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-
-  invoices  Invoice[]
 }
 
 model Invoice {
@@ -78,60 +99,84 @@ model Invoice {
   amount      Decimal
   currency    String        @default("INR")
   dueDate     DateTime
-  status      InvoiceStatus @default(DRAFT)
   invoiceDate DateTime
+  status      InvoiceStatus @default(DRAFT)
   pdfUrl      String?
 
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id])
 
-  userId     String
-  user       User          @relation(fields: [userId], references: [id])
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
 
-  clientId   String
-  client     Client        @relation(fields: [clientId], references: [id])
+  reminderProposals ReminderProposal[]
 
-  reminderRules ReminderRule[]
-  reminderLogs  ReminderLog[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@index([userId])
+  @@index([accountId])
   @@index([clientId])
 }
 
 model ReminderRule {
-  id              String   @id @default(uuid())
-  tone            Tone
-  channel         Channel
-  isActive        Boolean  @default(true)
-  startAfterDays  Int
-  repeatEveryDays Int
-  maxReminders    Int
+  id String @id @default(uuid())
 
-  createdAt       DateTime @default(now())
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
 
-  invoiceId       String
-  invoice         Invoice  @relation(fields: [invoiceId], references: [id])
+  type     ReminderRuleType
+  config   Json
+  isActive Boolean          @default(true)
 
-  reminderLogs ReminderLog[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reminderProposals ReminderProposal[]
 }
 
-model ReminderLog {
-  id        String   @id @default(uuid())
-  sentAt   DateTime @default(now())
-  channel  Channel
-  tone     Tone
-  success  Boolean
-  errorMsg String?
+model ReminderProposal {
+  id String @id @default(uuid())
 
   invoiceId String
-  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
 
-  ruleId    String?
-  rule      ReminderRule? @relation(fields: [ruleId], references: [id])
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
+
+  ruleId String
+  rule   ReminderRule @relation(fields: [ruleId], references: [id])
+
+  scheduledFor DateTime
+  message      String
+
+  status ReminderProposalStatus @default(PENDING)
+
+  approvedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  executions ReminderExecution[]
+
+  @@unique([invoiceId, ruleId, scheduledFor])
+}
+
+model ReminderExecution {
+  id String @id @default(uuid())
+
+  proposalId String
+  proposal   ReminderProposal @relation(fields: [proposalId], references: [id])
+
+  channel ReminderChannel
+  status  ReminderExecutionStatus
+
+  sentAt       DateTime
+  providerResp Json?
+
+  createdAt DateTime @default(now())
 }
 
 model EmailAddress {
-  id        String @id @default(uuid())
+  id        String  @id @default(uuid())
   email     String
   isPrimary Boolean @default(false)
   isActive  Boolean @default(true)

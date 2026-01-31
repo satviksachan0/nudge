@@ -8,6 +8,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { JwtGuard } from 'src/auth/jwt/jwt.guard';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { InvoicesService } from './invoices.service';
@@ -18,22 +19,22 @@ export class InvoicesController {
   constructor(private invoicesService: InvoicesService) {}
 
   @Post()
-  create(@Req() req: any, @Body() dto: CreateInvoiceDto) {
-    return this.invoicesService.create(req.user.userId, dto);
+  create(@Req() req: Request, @Body() dto: CreateInvoiceDto) {
+    return this.invoicesService.create(req.accountId, dto);
   }
 
   @Get()
-  findAll(@Req() req: any) {
-    return this.invoicesService.findAll(req.user.userId);
+  findAll(@Req() req: Request) {
+    return this.invoicesService.findAll(req.accountId);
   }
 
   @Get(':id')
-  findOne(@Req() req: any, @Param('id') invoiceId: string) {
-    return this.invoicesService.findOne(req.user.userId, invoiceId);
+  findOne(@Req() req: Request, @Param('id') invoiceId: string) {
+    return this.invoicesService.findOne(req.accountId, invoiceId);
   }
 
   @Patch(':id/mark-paid')
-  markAsPaid(@Req() req: any, @Param('id') invoiceId: string) {
-    return this.invoicesService.markAsPaid(req.user.userId, invoiceId);
+  markAsPaid(@Req() req: Request, @Param('id') invoiceId: string) {
+    return this.invoicesService.markAsPaid(req.accountId, invoiceId);
   }
 }

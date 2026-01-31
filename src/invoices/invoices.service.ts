@@ -1,37 +1,38 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InvoiceStatus } from 'generated/prisma/enums';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
-import { InvoiceStatus } from 'generated/prisma/enums';
 
 @Injectable()
 export class InvoicesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(userId: string, dto: CreateInvoiceDto) {
+  async create(accountId: string, dto: CreateInvoiceDto) {
     return this.prisma.invoice.create({
       data: {
-        userId: userId,
-        clientId: dto.clientId,
         invoiceNo: dto.invoiceNumber,
         amount: dto.amount,
         currency: dto.currency,
-        invoiceDate: dto.invoiceDate,
         dueDate: dto.dueDate,
+        invoiceDate: dto.invoiceDate,
+        status: dto.status,
         pdfUrl: dto.pdfUrl,
+        accountId: accountId,
+        clientId: dto.clientId,
       },
     });
   }
 
-  async findAll(userId: string) {
+  async findAll(accountId: string) {
     return this.prisma.invoice.findMany({
-      where: { userId: userId },
+      where: { accountId },
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  async findOne(userId: string, invoiceId: string) {
+  async findOne(accountId: string, invoiceId: string) {
     const invoice = this.prisma.invoice.findFirst({
-      where: { id: invoiceId, userId: userId },
+      where: { id: invoiceId, accountId: accountId },
     });
 
     if (!invoice) throw new NotFoundException('Invoice not found');
@@ -39,8 +40,8 @@ export class InvoicesService {
     return invoice;
   }
 
-  async markAsPaid(userId: string, invoiceId: string) {
-    const invoice = await this.findOne(userId, invoiceId);
+  async markAsPaid(accountId: string, invoiceId: string) {
+    const invoice = await this.findOne(accountId, invoiceId);
     if (!invoice)
       throw new NotFoundException('Invoice not found, cannot mark as paid');
     return this.prisma.invoice.update({
