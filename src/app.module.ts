@@ -14,6 +14,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { RemindersModule } from './reminders/reminders.module';
 import { TestController } from './test/test.controller';
 import { ReminderRuleModule } from './reminder-rule/reminder-rule.module';
+import { ReminderSchedulerModule } from './reminder-scheduler/reminder-scheduler.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ReminderRuleModule } from './reminder-rule/reminder-rule.module';
     RemindersModule,
     NotificationsModule,
     ReminderRuleModule,
+    ReminderSchedulerModule,
   ],
   controllers: [AppController, HealthController, TestController],
   providers: [AppService, EmailService],
