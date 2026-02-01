@@ -13,6 +13,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RemindersModule } from './reminders/reminders.module';
 import { TestController } from './test/test.controller';
+import { ReminderRuleModule } from './reminder-rule/reminder-rule.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { TestController } from './test/test.controller';
     ClientModule,
     RemindersModule,
     NotificationsModule,
+    ReminderRuleModule,
   ],
   controllers: [AppController, HealthController, TestController],
   providers: [AppService, EmailService],
