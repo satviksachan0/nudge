@@ -12,7 +12,7 @@ export class ReminderSchedulerService {
 
   @Cron(CronExpression.EVERY_HOUR)
   async generateReminderProposals() {
-    this.logger.log('Running remnider proposal sheduler');
+    this.logger.log('Running remnider proposal scheduler');
 
     const invoices = await this.prisma.invoice.findMany({
       where: {

@@ -5,5 +5,6 @@ import { ReminderSchedulerService } from './reminder-scheduler.service';
 @Module({
   imports: [PrismaModule],
   providers: [ReminderSchedulerService],
+  exports: [ReminderSchedulerService],
 })
 export class ReminderSchedulerModule {}
