@@ -28,6 +28,7 @@
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
     "bcrypt": "^6.0.0",
+    "class-validator": "^0.14.3",
     "cookie-parser": "^1.4.7",
     "jsonwebtoken": "^9.0.3",
     "nodemailer": "^7.0.12",
