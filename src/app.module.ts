@@ -16,6 +16,7 @@ import { ReminderRuleModule } from './reminder-rule/reminder-rule.module';
 import { ReminderSchedulerModule } from './reminder-scheduler/reminder-scheduler.module';
 import { RemindersModule } from './reminders/reminders.module';
 import { TestController } from './test/test.controller';
+import { ReminderProposalModule } from './reminder-proposal/reminder-proposal.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { TestController } from './test/test.controller';
     ReminderRuleModule,
     ReminderSchedulerModule,
     AdminModule,
+    ReminderProposalModule,
   ],
   controllers: [AppController, HealthController, TestController],
   providers: [AppService, EmailService],
