@@ -3,13 +3,13 @@ import {
   Controller,
   Get,
   Param,
-  Post,
+  Patch,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtGuard } from 'src/auth/jwt/jwt.guard';
-import { ApproveReminderDto } from './dto/approve-reminder.dto';
+import { PatchReminderDto } from './dto/approve-reminder.dto';
 import { ReminderProposalService } from './reminder-proposal.service';
 
 @UseGuards(JwtGuard)
@@ -22,17 +22,21 @@ export class ReminderProposalController {
     return this.service.listPending(req.accountId);
   }
 
-  @Post(':id/approve')
+  @Patch(':id/approve')
   async approve(
     @Req() req: Request,
     @Param('id') id: string,
-    @Body() dto: ApproveReminderDto,
+    @Body() dto: PatchReminderDto,
   ) {
     return this.service.approve(req.accountId, id, dto);
   }
 
-  @Post(':id/cancel')
-  async cancel(@Req() req: Request, @Param('id') id: string) {
-    return this.service.cancel(req.accountId, id);
+  @Patch(':id/cancel')
+  async cancel(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() dto: PatchReminderDto,
+  ) {
+    return this.service.cancel(req.accountId, id, dto);
   }
 }
