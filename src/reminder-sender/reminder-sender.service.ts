@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { EmailOwner, ReminderProposalStatus } from 'generated/prisma/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { sendEmail } from './reminder-sender.mailer';
@@ -10,7 +10,12 @@ export class ReminderSenderService {
 
   constructor(private prisma: PrismaService) {}
 
-  @Cron('*/5 * * * *')
+  /**
+   * This Cron is rn set on functionality of only sending email.
+   * note: No check for channel rn. will by default send email
+   * TODO: add ability to check for channel if email or whatsapp and send accordingly
+   */
+  @Cron(CronExpression.EVERY_5_MINUTES)
   async sendApprovedReminders() {
     const now = new Date();
 
