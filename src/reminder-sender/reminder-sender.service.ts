@@ -59,6 +59,11 @@ export class ReminderSenderService {
           throw new Error('No client email');
         }
 
+        if (process.env.SEND_EMAIL !== 'true') {
+          console.log('SEND_EMAIL: email suppressed');
+          console.log(proposal.message);
+          return;
+        }
         const result = await sendEmail(
           email,
           `Invoice ${proposal.invoice.invoiceNo} Reminder`,

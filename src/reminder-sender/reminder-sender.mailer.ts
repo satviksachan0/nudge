@@ -1,17 +1,53 @@
+import * as nodemailer from 'nodemailer';
+
 export type SendResult = { success: true } | { success: false; error: string };
 
+function getTransporter() {
+  const host = process.env.SMTP_HOST;
+  const port = Number(process.env.SMTP_PORT);
+
+  if (!host || !port) {
+    throw new Error('SMTP env vars not loaded');
+  }
+
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+}
+
+/**
+ * TODO: have better modulation and structure to send email. fine for mvp
+ * @param to
+ * @param subject
+ * @param body
+ * @returns
+ */
 export async function sendEmail(
   to: string,
   subject: string,
   body: string,
 ): Promise<SendResult> {
-  // 🔴 TEMP: mock sender
-  console.log('📧 Sending email to:', to);
-  console.log(body);
+  try {
+    const transporter = getTransporter();
 
-  // simulate success
-  return { success: true };
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to,
+      subject,
+      text: body,
+    });
 
-  // later:
-  // integrate SES / SMTP / Resend
+    return { success: true };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err.message ?? 'Email send failed',
+    };
+  }
 }
